@@ -31,20 +31,23 @@ class GetData:
 
     def import_data(self, dataDir):
         self.dataDir = dataDir
-        self.df = pd.read_csv(dataDir, sep=";")
+        self.df = pd.read_csv(dataDir, sep=",")
+
+        # df = pd.read_csv("data/acoes-listadas.csv", sep=',')
+        self.df["Codigo"] = self.df["Codigo"].astype("str") + ".SA"
 
         start = time.time()
 
         df_stock = pd.DataFrame()
-        stock_list = self.df["Ticker"].tolist()
-        # stock_list.append('IVVB11.SA')
-        stock_list.append("^GSPC")
+        stock_list = self.df["Codigo"].tolist()
+        stock_list.append("IVVB11.SA")
+        # stock_list.append("^GSPC")
         for stock in stock_list:
             df_stock[stock] = yf.download(
                 stock, start=self.begin_date, end=self.end_date
             )["Adj Close"]
 
-        # df_stock=df_stock.fillna(method="bfill")
+        df_stock = df_stock.fillna(method="bfill")
 
         # Stocks removed if data of the stock is not complete
         df_stock = df_stock.dropna(axis=1)
@@ -58,8 +61,14 @@ class GetData:
 
         print(returns_stocks_acm)
 
-        returns_stocks_acm.to_csv("./data/stocks_s&p.csv")
+        returns_stocks_acm.to_csv("./data/stocks_s&p_test.csv")
+
+    def calculate_volatility()
 
 
-dataDir = "./data/index_sample.csv"
-GetData("01/01/2009", "31/12/2019").import_data(dataDir)
+# gerar dataframes para cada um dos metodos --> onde cada linha é um ticker
+# e os metodos abaixo seriam as colunas do df
+
+# metodo para calculo da volatilidade (desvio padrao)
+# metodo para retorno medio diario (tirar a media do retorno)
+# retorno acumulado (percentual)
